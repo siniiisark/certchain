@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CertChain - Blockchain Certificate System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.2/web3.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        .splash-content {
+            text-align: center;
+            color: white;
+        }
+
+        .splash-content h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Main App */
+        .app {
+            display: none;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+
+        nav {
+            background: #2193b0;
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wallet-btn {
+            background: #ffffff;
+            color: #2193b0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .wallet-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-card h3 {
+            margin: 1rem 0;
+            color: #2193b0;
+        }
+
+        .action-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-content">
+            <h1>CertChain</h1>
+            <p>Blockchain-Based Certificate Verification System</p>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app" id="mainApp">
+        <nav>
+            <h2>CertChain</h2>
+            <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
+        </nav>
+
+        <div class="main-content">
+            <h1>Welcome to CertChain</h1>
+            <p>Secure and verify certificates using blockchain technology</p>
+
+            <div class="actions">
+                <div class="action-card" id="issueCertificate">
+                    <h3>Issue Certificate</h3>
+                    <p>Create and issue new certificates on the blockchain</p>
+                </div>
+                <div class="action-card" id="verifyCertificate">
+                    <h3>Verify Certificate</h3>
+                    <p>Verify the authenticity of existing certificates</p>
+                </div>
+                <div class="action-card" id="viewCertificates">
+                    <h3>View Certificates</h3>
+                    <p>Browse all certificates issued by your account</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Splash screen handling
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splashScreen').style.opacity = '0';
+                document.getElementById('mainApp').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('splashScreen').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // Wallet connection
+        const connectWalletBtn = document.getElementById('connectWallet');
+        let web3;
+        let accounts;
+
+        connectWalletBtn.addEventListener('click', async () => {
+            try {
+                // Check if MetaMask is installed
+                if (typeof window.ethereum !== 'undefined') {
+                    // Request account access
+                    accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    web3 = new Web3(window.ethereum);
+                    
+                    // Update button text with shortened address
+                    const shortenedAddress = accounts[0].slice(0, 6) + '...' + accounts[0].slice(-4);
+                    connectWalletBtn.textContent = shortenedAddress;
+                    
+                    // You could add additional setup here
+                    console.log('Wallet connected:', accounts[0]);
+                } else {
+                    alert('Please install MetaMask to use this dApp!');
+                }
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+                alert('Failed to connect wallet. Please try again.');
+            }
+        });
+
+        // Add click handlers for action cards
+        document.getElementById('issueCertificate').addEventListener('click', () => {
+            if (!accounts || accounts.length === 0) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+            // Add certificate issuance logic here
+            alert('Certificate issuance coming soon!');
+        });
+
+        document.getElementById('verifyCertificate').addEventListener('click', () => {
+            if (!accounts || accounts.length === 0) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+            // Add certificate verification logic here
+            alert('Certificate verification coming soon!');
+        });
+
+        document.getElementById('viewCertificates').addEventListener('click', () => {
+            if (!accounts || accounts.length === 0) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+            // Add certificate viewing logic here
+            alert('Certificate viewing coming soon!');
+        });
+    </script>
+</body>
+</html>
